@@ -1,4 +1,4 @@
-﻿--Desde system creamos los tablespaces. Uno para el administrador y el otro para los demas
+--Desde system creamos los tablespaces. Uno para el administrador y el otro para los demas
 create tablespace MITUBO_ESPACE datafile 'C:\app\alumnos\mitubo_espace.dbf' size 1G autoextend on; 
 create tablespace ESPACE_GENTE datafile 'C:\app\alumnos\espace_gente.dbf' size 500M autoextend on; 
 --Creamos el perfil de conexion que compartiran los usuarios
@@ -60,9 +60,9 @@ ALTER TABLE ajustes ADD CONSTRAINT ajustes_pk PRIMARY KEY ( id_ajustes );
 CREATE TABLE canal (
     id_canal        NUMBER NOT NULL,
     nombre          VARCHAR2(50) NOT NULL,
-    descripción     VARCHAR2(50),
+    descripcionn     VARCHAR2(50),
     ambito          VARCHAR2(50) NOT NULL,
-    temática        VARCHAR2(50) NOT NULL,
+    tematica        VARCHAR2(50) NOT NULL,
     imagen          blob,
     id_trailer      NUMBER ,
     subscriptores   NUMBER NOT NULL
@@ -132,12 +132,12 @@ ALTER TABLE historialv1 ADD CONSTRAINT historialv1_pk PRIMARY KEY ( usuario_id_u
 CREATE TABLE lista_reproducción (
     nombre               VARCHAR2(50) NOT NULL,
     id_lista             VARCHAR2(50) NOT NULL,
-    pública              CHAR(1) NOT NULL,
+    publica              CHAR(1) NOT NULL,
     canal_id_canal       NUMBER,
     usuario_id_usuario   NUMBER
 );
 
-ALTER TABLE lista_reproducción ADD CONSTRAINT lista_reproducción_pk PRIMARY KEY ( id_lista );
+ALTER TABLE lista_reproduccion ADD CONSTRAINT lista_reproduccion_pk PRIMARY KEY ( id_lista );
 
 CREATE TABLE notificacion (
     id_notificacion        NUMBER NOT NULL,
@@ -165,7 +165,7 @@ CREATE TABLE relation_12 (
     orden                         NUMBER
 );
 
-ALTER TABLE relation_12 ADD CONSTRAINT relation_12_pk PRIMARY KEY ( video_id_video,lista_reproducción_id_lista );
+ALTER TABLE relation_12 ADD CONSTRAINT relation_12_pk PRIMARY KEY ( video_id_video,lista_reproduccion_id_lista );
 
 CREATE TABLE relation_13 (
     video_id_video         NUMBER NOT NULL,
@@ -210,7 +210,7 @@ CREATE TABLE usuario (
     apellido2                VARCHAR2(50) NOT NULL,
     email                    VARCHAR2(50) NOT NULL,
     foto                     blob NOT NULL,
-    descripción              VARCHAR2(50),
+    descripcion              VARCHAR2(50),
     zona_horaria             VARCHAR2(50) NOT NULL,
     idioma                   VARCHAR2(50) NOT NULL,
     pais                     VARCHAR2(50) NOT NULL,
@@ -228,16 +228,16 @@ ALTER TABLE usuario ADD CONSTRAINT usuario_pk PRIMARY KEY ( id_usuario );
 
 CREATE TABLE video (
     id_video             NUMBER NOT NULL,
-    duración             DATE NOT NULL,
+    duracion             DATE NOT NULL,
     titulo               VARCHAR2(50) NOT NULL,
-    descripción          VARCHAR2(50),
+    descripcion          VARCHAR2(50),
     formato              VARCHAR2(50) NOT NULL,
     enlace               VARCHAR2(50) NOT NULL,
     n_visualizaciones   NUMBER NOT NULL,
     n_comentarios       NUMBER NOT NULL,
     n_megusta           NUMBER NOT NULL,
     n_nomegusta         NUMBER,
-    fecha_creación       DATE NOT NULL,
+    fecha_creacion       DATE NOT NULL,
     imagen               blob NOT NULL,
     video_pago           CHAR(1),
     canal_id_canal       NUMBER
@@ -247,9 +247,9 @@ ALTER TABLE video ADD CONSTRAINT video_pk PRIMARY KEY ( id_video );
 
 CREATE TABLE video_anuncio (
     id_video             NUMBER NOT NULL,
-    temática             VARCHAR2(50) NOT NULL,
+    tematica             VARCHAR2(50) NOT NULL,
     edad                 NUMBER,
-    género               VARCHAR2(50),
+    genero               VARCHAR2(50),
     idioma               VARCHAR2(50),
     pais                 VARCHAR2(50),
     empresa_id_usuario   NUMBER,
@@ -276,8 +276,8 @@ ALTER TABLE denuncia ADD CONSTRAINT denuncia_usuario_fk FOREIGN KEY ( usuario_id
 ALTER TABLE empresa ADD CONSTRAINT empresa_usuario_fk FOREIGN KEY ( id_usuario )
     REFERENCES usuario ( id_usuario );
 
-ALTER TABLE relation_12 ADD CONSTRAINT fk_ass_10 FOREIGN KEY ( lista_reproducción_id_lista )
-    REFERENCES lista_reproducción ( id_lista );
+ALTER TABLE relation_12 ADD CONSTRAINT fk_ass_10 FOREIGN KEY ( lista_reproduccion_id_lista )
+    REFERENCES lista_reproduccion ( id_lista );
 
 ALTER TABLE relation_13 ADD CONSTRAINT fk_ass_11 FOREIGN KEY ( video_id_video )
     REFERENCES video ( id_video );
@@ -321,10 +321,10 @@ ALTER TABLE relation_12 ADD CONSTRAINT fk_ass_9 FOREIGN KEY ( video_id_video )
 ALTER TABLE historial ADD CONSTRAINT historial_usuario_fk FOREIGN KEY ( usuario_id_usuario )
     REFERENCES usuario ( id_usuario );
 
-ALTER TABLE lista_reproducción ADD CONSTRAINT lista_reproducción_canal_fk FOREIGN KEY ( canal_id_canal )
+ALTER TABLE lista_reproduccion ADD CONSTRAINT lista_reproduccion_canal_fk FOREIGN KEY ( canal_id_canal )
     REFERENCES canal ( id_canal );
 
-ALTER TABLE lista_reproducción ADD CONSTRAINT lista_reproducción_usuario_fk FOREIGN KEY ( usuario_id_usuario )
+ALTER TABLE lista_reproduccion ADD CONSTRAINT lista_reproduccion_usuario_fk FOREIGN KEY ( usuario_id_usuario )
     REFERENCES usuario ( id_usuario );
 
 ALTER TABLE notificacion ADD CONSTRAINT notificacion_canal_fk FOREIGN KEY ( canal_id_canal )
