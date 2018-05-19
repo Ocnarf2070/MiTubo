@@ -129,7 +129,7 @@ CREATE TABLE historialv1 (
 
 ALTER TABLE historialv1 ADD CONSTRAINT historialv1_pk PRIMARY KEY ( usuario_id_usuario,video_id_video );
 
-CREATE TABLE lista_reproducción (
+CREATE TABLE lista_reproduccion (
     nombre               VARCHAR2(50) NOT NULL,
     id_lista             VARCHAR2(50) NOT NULL,
     publica              CHAR(1) NOT NULL,
@@ -161,7 +161,7 @@ ALTER TABLE pago ADD CONSTRAINT pago_pk PRIMARY KEY ( video_id_video );
 
 CREATE TABLE relation_12 (
     video_id_video                NUMBER NOT NULL,
-    lista_reproducción_id_lista   VARCHAR2(50) NOT NULL,
+    lista_reproduccion_id_lista   VARCHAR2(50) NOT NULL,
     orden                         NUMBER
 );
 
