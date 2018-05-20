@@ -229,7 +229,7 @@ ALTER TABLE usuario ADD CONSTRAINT usuario_pk PRIMARY KEY ( id_usuario );
 
 CREATE TABLE video (
     id_video             NUMBER NOT NULL,
-    duracion             DATE NOT NULL,
+    duracion             NUMBER NOT NULL,
     titulo               VARCHAR2(50) NOT NULL,
     descripcion          VARCHAR2(50),
     formato              VARCHAR2(50) NOT NULL,
