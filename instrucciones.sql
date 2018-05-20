@@ -1,32 +1,38 @@
-﻿--Desde system creamos los tablespaces. Uno para el administrador y el otro para los demas
+--Desde system creamos los tablespaces. Uno para el administrador y el otro para los demas
 create tablespace MITUBO_ESPACE datafile 'C:\app\alumnos\mitubo_espace.dbf' size 1G autoextend on; 
 create tablespace ESPACE_GENTE datafile 'C:\app\alumnos\espace_gente.dbf' size 500M autoextend on; 
 --Creamos el perfil de conexion que compartiran los usuarios
 CREATE PROFILE MITUBO_PERF LIMIT FAILED_LOGIN_ATTEMPTS 3 IDLE_TIME 5;
 --Creamos los roles de los usuarios y los usuarios
 --Ademas les damos los permisos necesarios para que realicen sus funciones
-CREATE ROLE CONSULTOR;
-GRANT CONNECT TO CONSULTOR;
 
-CREATE USER CONSULTOR_U IDENTIFIED BY bd PROFILE MITUBO_PERF
-DEFAULT TABLESPACE ESPACE_GENTE;
+CREATE ROLE R_CONSULTOR;
+GRANT CONNECT TO R_CONSULTOR; 
+CREATE USER U_CONSULTOR IDENTIFIED BY bd PROFILE MITUBO_PERF DEFAULT TABLESPACE ESPACE_GENTE;
+GRANT R_CONSULTOR to U_CONSULTOR;
 
-CREATE ROLE AGENTE;
+CREATE ROLE R_AGENTE;
+GRANT SELECT, DELETE  ON DENUNCIA TO R_AGENTE;
+GRANT DELETE ON VIDEO TO R_AGENTE;
+GRANT INSERT, DELETE ON NOTIFICACION TO R_AGENTE;
+GRANT CONNECT TO R_AGENTE; 
+CREATE USER U_AGENTE IDENTIFIED BY bd PROFILE MITUBO_PERF DEFAULT TABLESPACE ESPACE_GENTE;
+GRANT R_AGENTE to U_AGENTE;
 
-
-CREATE ROLE ADMINISTRADOR;
-GRANT CONNECT TO ADMINISTRADOR; 
-GRANT RESOURCE, CREATE VIEW TO ADMINISTRADOR;
-CREATE USER ADMINISTRADO IDENTIFIED BY bd PROFILE MITUBO_PERF QUOTA 1G 
+CREATE ROLE R_ADMINISTRADOR;
+GRANT CONNECT TO R_ADMINISTRADOR; 
+GRANT RESOURCE TO R_ADMINISTRADOR;
+CREATE USER U_ADMINISTRADOR IDENTIFIED BY bd PROFILE MITUBO_PERF QUOTA 1G 
 ON MITUBO_ESPACE DEFAULT TABLESPACE MITUBO_ESPACE;
-GRANT ADMINISTRADOR to ADMINISTRADO;
+GRANT CREATE VIEW TO R_ADMINISTRADOR;
+GRANT R_ADMINISTRADOR to U_ADMINISTRADOR;
 
-CREATE ROLE USUARIO;
-GRANT CONNECT TO USUARIO; 
-CREATE USER USUARIO_U IDENTIFIED BY bd PROFILE MITUBO_PERF
-DEFAULT TABLESPACE ESPACE_GENTE;
+CREATE ROLE R_USUARIO;
+GRANT CONNECT TO R_USUARIO; 
+CREATE USER U_USUARIO IDENTIFIED BY bd PROFILE MITUBO_PERF DEFAULT TABLESPACE ESPACE_GENTE;
+GRANT R_USUARIO to U_USUARIO;
 
---Ejecutamos el ddl desde ADMINISTRADOR_U
+--Ejecutamos el ddl desde U_ADMINISTRADOR
 
 CREATE TABLE video_pago(
     id_video   NUMBER NOT NULL,
@@ -55,9 +61,9 @@ ALTER TABLE ajustes ADD CONSTRAINT ajustes_pk PRIMARY KEY ( id_ajustes );
 CREATE TABLE canal (
     id_canal        NUMBER NOT NULL,
     nombre          VARCHAR2(50) NOT NULL,
-    descripción     VARCHAR2(50),
+    descripcionn     VARCHAR2(50),
     ambito          VARCHAR2(50) NOT NULL,
-    temática        VARCHAR2(50) NOT NULL,
+    tematica        VARCHAR2(50) NOT NULL,
     imagen          blob,
     id_trailer      NUMBER ,
     subscriptores   NUMBER NOT NULL
@@ -124,15 +130,15 @@ CREATE TABLE historialv1 (
 
 ALTER TABLE historialv1 ADD CONSTRAINT historialv1_pk PRIMARY KEY ( usuario_id_usuario,video_id_video );
 
-CREATE TABLE lista_reproducción (
+CREATE TABLE lista_reproduccion (
     nombre               VARCHAR2(50) NOT NULL,
     id_lista             VARCHAR2(50) NOT NULL,
-    pública              CHAR(1) NOT NULL,
+    publica              CHAR(1) NOT NULL,
     canal_id_canal       NUMBER,
     usuario_id_usuario   NUMBER
 );
 
-ALTER TABLE lista_reproducción ADD CONSTRAINT lista_reproducción_pk PRIMARY KEY ( id_lista );
+ALTER TABLE lista_reproduccion ADD CONSTRAINT lista_reproduccion_pk PRIMARY KEY ( id_lista );
 
 CREATE TABLE notificacion (
     id_notificacion        NUMBER NOT NULL,
@@ -156,11 +162,11 @@ ALTER TABLE pago ADD CONSTRAINT pago_pk PRIMARY KEY ( video_id_video );
 
 CREATE TABLE relation_12 (
     video_id_video                NUMBER NOT NULL,
-    lista_reproducción_id_lista   VARCHAR2(50) NOT NULL,
+    lista_reproduccion_id_lista   VARCHAR2(50) NOT NULL,
     orden                         NUMBER
 );
 
-ALTER TABLE relation_12 ADD CONSTRAINT relation_12_pk PRIMARY KEY ( video_id_video,lista_reproducción_id_lista );
+ALTER TABLE relation_12 ADD CONSTRAINT relation_12_pk PRIMARY KEY ( video_id_video,lista_reproduccion_id_lista );
 
 CREATE TABLE relation_13 (
     video_id_video         NUMBER NOT NULL,
@@ -205,7 +211,7 @@ CREATE TABLE usuario (
     apellido2                VARCHAR2(50) NOT NULL,
     email                    VARCHAR2(50) NOT NULL,
     foto                     blob NOT NULL,
-    descripción              VARCHAR2(50),
+    descripcion              VARCHAR2(50),
     zona_horaria             VARCHAR2(50) NOT NULL,
     idioma                   VARCHAR2(50) NOT NULL,
     pais                     VARCHAR2(50) NOT NULL,
@@ -223,16 +229,16 @@ ALTER TABLE usuario ADD CONSTRAINT usuario_pk PRIMARY KEY ( id_usuario );
 
 CREATE TABLE video (
     id_video             NUMBER NOT NULL,
-    duración             DATE NOT NULL,
+    duracion             DATE NOT NULL,
     titulo               VARCHAR2(50) NOT NULL,
-    descripción          VARCHAR2(50),
+    descripcion          VARCHAR2(50),
     formato              VARCHAR2(50) NOT NULL,
     enlace               VARCHAR2(50) NOT NULL,
     n_visualizaciones   NUMBER NOT NULL,
     n_comentarios       NUMBER NOT NULL,
     n_megusta           NUMBER NOT NULL,
     n_nomegusta         NUMBER,
-    fecha_creación       DATE NOT NULL,
+    fecha_creacion       DATE NOT NULL,
     imagen               blob NOT NULL,
     video_pago           CHAR(1),
     canal_id_canal       NUMBER
@@ -242,9 +248,9 @@ ALTER TABLE video ADD CONSTRAINT video_pk PRIMARY KEY ( id_video );
 
 CREATE TABLE video_anuncio (
     id_video             NUMBER NOT NULL,
-    temática             VARCHAR2(50) NOT NULL,
+    tematica             VARCHAR2(50) NOT NULL,
     edad                 NUMBER,
-    género               VARCHAR2(50),
+    genero               VARCHAR2(50),
     idioma               VARCHAR2(50),
     pais                 VARCHAR2(50),
     empresa_id_usuario   NUMBER,
@@ -271,8 +277,8 @@ ALTER TABLE denuncia ADD CONSTRAINT denuncia_usuario_fk FOREIGN KEY ( usuario_id
 ALTER TABLE empresa ADD CONSTRAINT empresa_usuario_fk FOREIGN KEY ( id_usuario )
     REFERENCES usuario ( id_usuario );
 
-ALTER TABLE relation_12 ADD CONSTRAINT fk_ass_10 FOREIGN KEY ( lista_reproducción_id_lista )
-    REFERENCES lista_reproducción ( id_lista );
+ALTER TABLE relation_12 ADD CONSTRAINT fk_ass_10 FOREIGN KEY ( lista_reproduccion_id_lista )
+    REFERENCES lista_reproduccion ( id_lista );
 
 ALTER TABLE relation_13 ADD CONSTRAINT fk_ass_11 FOREIGN KEY ( video_id_video )
     REFERENCES video ( id_video );
@@ -316,10 +322,10 @@ ALTER TABLE relation_12 ADD CONSTRAINT fk_ass_9 FOREIGN KEY ( video_id_video )
 ALTER TABLE historial ADD CONSTRAINT historial_usuario_fk FOREIGN KEY ( usuario_id_usuario )
     REFERENCES usuario ( id_usuario );
 
-ALTER TABLE lista_reproducción ADD CONSTRAINT lista_reproducción_canal_fk FOREIGN KEY ( canal_id_canal )
+ALTER TABLE lista_reproduccion ADD CONSTRAINT lista_reproduccion_canal_fk FOREIGN KEY ( canal_id_canal )
     REFERENCES canal ( id_canal );
 
-ALTER TABLE lista_reproducción ADD CONSTRAINT lista_reproducción_usuario_fk FOREIGN KEY ( usuario_id_usuario )
+ALTER TABLE lista_reproduccion ADD CONSTRAINT lista_reproduccion_usuario_fk FOREIGN KEY ( usuario_id_usuario )
     REFERENCES usuario ( id_usuario );
 
 ALTER TABLE notificacion ADD CONSTRAINT notificacion_canal_fk FOREIGN KEY ( canal_id_canal )
@@ -370,26 +376,31 @@ END;
 
 
 --Creamos las vistas tanto para administrador como para un usuario concreto
---Desde ADMINISTRADOR
+--Desde U_ADMINISTRADOR
 CREATE  VIEW Pago_TOTAL_VIDEO AS (select (pago*video.N_VISUALIZACIONES) PAGO_TOTAL,
  video.ID_VIDEO, video.TITULO  from video , pago where video.ID_VIDEO=pago.VIDEO_ID_VIDEO
 ) with read only;
+
 CREATE  VIEW CANAL_DINERO_TOTAL AS (select  canal.ID_CANAL, sum(pago.PAGO*video.N_VISUALIZACIONES) pago, canal.NOMBRE
  from video, canal, pago 
  where video.CANAL_ID_CANAL= canal.ID_CANAL and video.ID_VIDEO=pago.VIDEO_ID_VIDEO 
  group by canal.ID_CANAL, canal.NOMBRE
 )with read only;
+
 CREATE  VIEW VIDEOS_CON_DENUNCIA AS (select video.ID_VIDEO, DENUNCIA.ID_DENUNCIA 
 from video, DENUNCIA, RELATION_13 
 where RELATION_13.VIDEO_ID_VIDEO=video.id_video 
 and RELATION_13.DENUNCIA_ID_DENUNCIA=DENUNCIA.ID_DENUNCIA
 )with read only;
+
 CREATE  VIEW VIDEO_ESTADISTICAS  AS (select ID_VIDEO, N_MEGUSTA, N_VISUALIZACIONES, 
 N_NOMEGUSTA, N_COMENTARIOS from video
 )with read only;
+
 CREATE  VIEW PORCENTAJES_VIDEO AS (SELECT ID_VIDEO, (N_MEGUSTA/N_VISUALIZACIONES*100) porcentaje_likes,
 (N_NOMEGUSTA/N_VISUALIZACIONES*100) porcentaje_no_likes  FROM video
 )with read only;
+
 CREATE  VIEW USUARIO_DATOS AS (select U.ID_USUARIO, V.TITULO,CA.NOMBRE  
 from ADMINISTRADOR_U.USUARIO U, ADMINISTRADOR_U.video V, ADMINISTRADOR_U.CANAL CA 
 where V.CANAL_ID_CANAL=CA.ID_CANAL AND U.CANAL_ID_CANAL=CA.ID_CANAL AND U.ALIAS = USER
@@ -397,17 +408,15 @@ where V.CANAL_ID_CANAL=CA.ID_CANAL AND U.CANAL_ID_CANAL=CA.ID_CANAL AND U.ALIAS 
 
 
 --Desde system concedemos los permisos para acceder a las vistas
-GRANT SELECT ON ADMINISTRADOR_U.PAGO_TOTAL_VIDEO TO CONSULTOR_U;
-GRANT SELECT ON ADMINISTRADOR_U.CANAL_DINERO_TOTAL TO CONSULTOR_U;
-GRANT SELECT ON ADMINISTRADOR_U.VIDEOS_CON_DENUNCIA TO CONSULTOR_U; 
-GRANT SELECT ON ADMINISTRADOR_U.VIDEO_ESTADISTICAS TO CONSULTOR_U; 
-GRANT SELECT ON ADMINISTRADOR_U.PORCENTAJES_VIDEO TO CONSULTOR_U;
-GRANT SELECT on ADMINISTRADOR_U.USUARIO_DATOS to USUARIO_U;
-GRANT SELECT, DELETE  ON ADMINISTRADOR_U.DENUNCIA TO AGENTE;
-GRANT DELETE ON ADMINISTRADOR_U.VIDEO TO AGENTE;
-GRANT INSERT, DELETE ON ADMINISTRADOR_U.NOTIFICACION TO AGENTE;
-GRANT CONNECT TO AGENTE; 
-CREATE USER AGENTE_U IDENTIFIED BY bd PROFILE MITUBO_PERF
-DEFAULT TABLESPACE ESPACE_GENTE;
+GRANT SELECT ON U_ADMINISTRADOR.PAGO_TOTAL_VIDEO TO U_CONSULTOR;
+GRANT SELECT ON U_ADMINISTRADOR.CANAL_DINERO_TOTAL TO U_CONSULTOR;
+GRANT SELECT ON U_ADMINISTRADOR.VIDEOS_CON_DENUNCIA TO U_CONSULTOR; 
+GRANT SELECT ON U_ADMINISTRADOR.VIDEO_ESTADISTICAS TO U_CONSULTOR; 
+GRANT SELECT ON U_ADMINISTRADOR.PORCENTAJES_VIDEO TO U_CONSULTOR;
+GRANT SELECT on U_ADMINISTRADOR.USUARIO_DATOS to U_USUARIO;
+GRANT SELECT, DELETE  ON U_ADMINISTRADOR.DENUNCIA TO U_AGENTE;
+GRANT DELETE ON U_ADMINISTRADOR.VIDEO TO U_AGENTE;
+GRANT INSERT, DELETE ON U_ADMINISTRADOR.NOTIFICACION TO U_AGENTE; 
+
 
 
