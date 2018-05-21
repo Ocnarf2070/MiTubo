@@ -85,5 +85,5 @@ BEGIN
       IDN := IDN + 1;
     END LOOP;
   END;
-  
+  COMMIT;
 END ALTA_VIDEO;
