@@ -93,8 +93,8 @@ CREATE TABLE historialv1 (
     usuario_id_usuario   NUMBER NOT NULL,
     video_id_video       NUMBER NOT NULL,
     porcentaje_visto     NUMBER,
-    empezo               NUMBER,
-    termino              NUMBER,
+    empezo               DATE,
+    termino              DATE,
     cadena_busqueda      VARCHAR2(50)
 );
 
@@ -199,7 +199,7 @@ ALTER TABLE usuario ADD CONSTRAINT usuario_pk PRIMARY KEY ( id_usuario );
 
 CREATE TABLE video (
     id_video             NUMBER NOT NULL,
-    duración             DATE NOT NULL,
+    duracion             NUMBER NOT NULL,
     titulo               VARCHAR2(50) NOT NULL,
     descripción          VARCHAR2(50),
     formato              VARCHAR2(50) NOT NULL,
@@ -208,7 +208,7 @@ CREATE TABLE video (
     n_comentarios       NUMBER NOT NULL,
     n_megusta           NUMBER NOT NULL,
     n_nomegusta         NUMBER,
-    fecha_creación       DATE NOT NULL,
+    fecha_creacion       DATE NOT NULL,
     imagen               blob NOT NULL,
     video_pago           CHAR(1),
     canal_id_canal       NUMBER
