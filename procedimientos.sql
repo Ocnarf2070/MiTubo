@@ -29,7 +29,7 @@ insert INTO usuario (ID_USUARIO,ALIAS,NOMBRE,APELLIDO1,APELLIDO2,EMAIL,ZONA_HORA
 idioma,pais,aleatorio2);
 END create_user;
 
---3.1 (En mi PC no hace nada, pero no sé si funciona porque compilar, compila)
+--3.1
 CREATE OR REPLACE PROCEDURE ALTA_VIDEO 
 (
 DUR IN NUMBER,
