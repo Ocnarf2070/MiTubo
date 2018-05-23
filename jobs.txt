@@ -1,0 +1,14 @@
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+    job_name => 'Borra',
+    job_type => 'PLSQL_BLOCK',
+    job_action => 'BEGIN 
+        
+         
+      END;',
+    start_date => SYSDATE+1,
+    repeat_interval => 'FREQ=WEEKLY; BYDAY=MON',
+    enabled => TRUE,
+    comments => 'Semanalmente borra aquellos usuarios inactivos'
+  );
+END;
