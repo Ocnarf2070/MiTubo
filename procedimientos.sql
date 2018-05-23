@@ -110,7 +110,6 @@ SELECT ID_USUARIO into nombre FROM USUARIO where user=ALIAS;
 SELECT DURACION into porcentaje FROM VIDEO where ID_VIDEO=video_id;
 --Miro si el video es de pago
 SELECT VIDEO_PAGO into es_de FROM VIDEO where ID_VIDEO=video_id;
-
 if TO_NUMBER(es_de)=1 then
 --Si el video es de pago miro si el user lo ha pagado
 SELECT COUNT(*) into pago_p from PAGO where VIDEO_ID_VIDEO=video_id and USUARIO_ID_USUARIO=nombre;
@@ -126,6 +125,8 @@ SELECT PORCENTAJE_VISTO into visto from HISTORIALV1 where video_id=VIDEO_ID_VIDE
  if duracion_v+visto=porcentaje then
  --Actualizo termino a la fecha actual y el porcentaje al total del video
   UPDATE historialv1 set termino = sysdate, porcentaje_visto=porcentaje where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
+  else 
+  UPDATE historialv1 set  porcentaje_visto=PORCENTAJE_VISTO+duracion_v where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
   end if;
 EXCEPTION
 --Si llego aqui es q es la 1º vez que veo el video
