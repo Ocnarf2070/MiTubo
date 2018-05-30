@@ -46,11 +46,11 @@ END;
 begin
 DBMS_SCHEDULER.CREATE_JOB (
     job_name=> 'borrado_semanal',
-    job_type=> 'STORED_PROCEDURE',
+    job_type=> 'PLSQL_BLOCK',
     job_action => 'P_INACTIVO',
     start_date => sysdate,
     repeat_interval => 'FREQ=SECONDLY;INTERVAL=60'
     );
-    end;
+end;
 
 
