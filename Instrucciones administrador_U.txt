@@ -1,0 +1,1 @@
+alter table usuario add borrado char(1) default 'N';
