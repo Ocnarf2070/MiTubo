@@ -1,6 +1,6 @@
 --Desde system creamos los tablespaces. Uno para el administrador y el otro para los demas
 create tablespace MITUBO_ESPACE datafile 'C:\app\alumnos\mitubo_espace.dbf' size 1G autoextend on; 
-create tablespace ESPACE_GENTE datafile 'C:\app\alumnos\espace_gente.dbf' size 500M autoextend on; 
+--create tablespace ESPACE_GENTE datafile 'C:\app\alumnos\espace_gente.dbf' size 500M autoextend on; 
 --Creamos el perfil de conexion que compartiran los usuarios
 CREATE PROFILE MITUBO_PERF LIMIT FAILED_LOGIN_ATTEMPTS 3 IDLE_TIME 5;
 --Creamos los roles de los usuarios y los usuarios
@@ -419,4 +419,4 @@ GRANT DELETE ON U_ADMINISTRADOR.VIDEO TO U_AGENTE;
 GRANT INSERT, DELETE ON U_ADMINISTRADOR.NOTIFICACION TO U_AGENTE; 
 
 
-
+--Crear indices-----
