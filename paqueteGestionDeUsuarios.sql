@@ -7,7 +7,7 @@ CREATE OR REPLACE PACKAGE GESTION_USUARIOS AS
     zona_horaria in VARCHAR2,
     idioma in VARCHAR2,
     pais in VARCHAR2,
-    contraseÒa VARCHAR2,
+    contrase√±a VARCHAR2,
     alias in VARCHAR2,
     ambito in varchar2,
     tematica in VARCHAR2
@@ -51,7 +51,7 @@ email in VARCHAR2,
 zona_horaria in VARCHAR2,
 idioma in VARCHAR2,
 pais in VARCHAR2,
-contraseÒa VARCHAR2,
+contrase√±a VARCHAR2,
 alias in VARCHAR2,
 ambito in varchar2,
 tematica in VARCHAR2
@@ -66,11 +66,11 @@ aleatorio:=0;
 else 
 aleatorio:=aleatorio+1;
 end if;
-sentencia1:= 'CREATE USER ' || nombre || ' IDENTIFIED BY ' || contraseÒa || ' PROFILE MITUBO_PERF DEFAULT TABLESPACE ESPACE_GENTE';
+sentencia1:= 'CREATE USER ' || nombre || ' IDENTIFIED BY ' || contrase√±a || ' PROFILE MITUBO_PERF DEFAULT TABLESPACE ESPACE_GENTE';
 execute immediate sentencia1;
 sentencia2:= 'grant R_USUARIO to' || nombre;
 execute immediate sentencia2;
-insert INTO canal (ID_CANAL,NOMBRE,AMBITO,TEM¡TICA,SUBSCRIPTORES) values (aleatorio,alias,ambito,tematica,0);
+insert INTO canal (ID_CANAL,NOMBRE,AMBITO,TEM√ÅTICA,SUBSCRIPTORES) values (aleatorio,alias,ambito,tematica,0);
 insert INTO usuario (ID_USUARIO,ALIAS,NOMBRE,APELLIDO1,APELLIDO2,EMAIL,ZONA_HORARIA,IDIOMA,PAIS,CANAL_ID_CANAL) values (aleatorio,alias,nombre,apellido1,apellido2,email,zona_horaria,
 idioma,pais,aleatorio);
 COMMIT;
@@ -97,7 +97,7 @@ END create_user;
     UPDATE USUARIO SET NOMBRE = NOMBRE_NUEVO,
     APELLIDO1=AP1,
     APELLIDO2=AP2,
-    DESCRIPCION=DES,
+    DESCRIPCI√ìN=DES,
     EMAIL=CORREO 
     WHERE ALIAS=USER;
   END MODIFICA;
@@ -107,9 +107,13 @@ END create_user;
     ALIAS IN VARCHAR2
   ) AS 
     SENTENCIA VARCHAR2(500);
+    ERROR_AL_BLOQUEAR EXCEPTION;
   BEGIN
     SENTENCIA:= 'ALTER USER '|| ALIAS ||' ACCOUNT LOCK' ;
     EXECUTE IMMEDIATE SENTENCIA;
+    EXCEPTION
+    WHEN ERROR_AL_BLOQUEAR THEN
+    DBMS_OUTPUT.PUT_LINE('EL USUARIO '||ALIAS|| '  NO SE HA PODIDO BLOQUEAR');
   END BLOQUEAR_USUARIO;
   
   ---DESBLOQUEAR USUARIO---
@@ -132,8 +136,7 @@ END create_user;
         CURSOR BLOQUEAR_CURSOR IS SELECT ALIAS FROM USUARIO WHERE PAIS=PAISBLOCK;
       BEGIN
         FOR VAR_CURSOR IN BLOQUEAR_CURSOR LOOP
-        SENTENCIA:= 'ALTER USER '|| VAR_CURSOR.ALIAS || ' ACCOUNT LOCK';
-        EXECUTE IMMEDIATE SENTENCIA;
+        BLOQUEAR_USUARIO(VAR_CURSOR.ALIAS);
       END LOOP;
       END;
     END BLOQUEAR_PAIS;
