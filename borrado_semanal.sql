@@ -47,7 +47,9 @@ BEGIN
   END;
   COMMIT;
 END;
-
+/
+--en system dar privilegios:
+--grant create job to u_administrador;
 begin
 DBMS_SCHEDULER.CREATE_JOB (
     job_name=> 'borrado_semanal',
@@ -57,5 +59,7 @@ DBMS_SCHEDULER.CREATE_JOB (
     repeat_interval => 'FREQ=SECONDLY;INTERVAL=60'
     );
 end;
+/
+exec dbms_scheduler.enable('borrado_semanal');
 
 
