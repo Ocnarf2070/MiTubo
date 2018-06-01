@@ -19,10 +19,10 @@ CREATE OR REPLACE PROCEDURE P_INACTIVO AS
   CONTADOR NUMBER;
   SENTENCIA VARCHAR2(500);
 BEGIN 
-  --LOCK TABLE USUARIO IN SHARE MODE;
-  --LOCK TABLE COMENTARIO IN SHARE MODE;
-  --LOCK TABLE VIDEO IN SHARE MODE;
-  --LOCK TABLE HISTORIALV1 IN SHARE MODE;
+  LOCK TABLE USUARIO IN SHARE MODE;
+  LOCK TABLE COMENTARIO IN SHARE MODE;
+  LOCK TABLE VIDEO IN SHARE MODE;
+  LOCK TABLE HISTORIALV1 IN SHARE MODE;
   DECLARE CURSOR U_ALIAS IS SELECT ID_USUARIO, ALIAS FROM USUARIO;
   BEGIN
     FOR VAR_CURSOR IN U_ALIAS LOOP
@@ -46,7 +46,23 @@ BEGIN
   END;
   COMMIT;
 END;
-
+/
+/*
+/
+--en system dar privilegios:
+--grant create job to u_administrador;
+begin
+DBMS_SCHEDULER.CREATE_JOB (
+    job_name=> 'borrado_semanal',
+    job_type=> 'STORED_PROCEDURE',
+    job_action => 'P_INACTIVO',
+    start_date => sysdate,
+    repeat_interval => 'FREQ=WEEKLY;BYDAY=FRI'
+    );
+end;
+/
+exec dbms_scheduler.enable('borrado_semanal');
+*/
 BEGIN
     DBMS_SCHEDULER.CREATE_JOB (
             job_name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"',
@@ -72,5 +88,6 @@ BEGIN
     DBMS_SCHEDULER.enable(
              name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"');
 END;
+-->>>>>>> master
 
 
