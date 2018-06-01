@@ -90,4 +90,4 @@ BEGIN
 END;
 -->>>>>>> master
 
-
+exec dbms_scheduler.enable('BORRADO_SEMANAL');
