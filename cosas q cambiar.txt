@@ -1,0 +1,10 @@
+cambiar el tablespace a por el que hemos creado
+crear indices
+controlar los privilegios sobre los procedimientos
+hacer constrains en varios apartados, ej: no valores negativos, @ en email, etc...
+crear secuencias para los  ids
+crear mas vistas para los usuarios
+dar mas permisos a los usuarios (los procedimientos de usuarios y videos lo utilizan los usuarios)
+implementar encriptación
+crear audit
+
