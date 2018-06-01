@@ -3,8 +3,7 @@ BEGIN
     job_name => 'Borra',
     job_type => 'PLSQL_BLOCK',
     job_action => 'BEGIN 
-        
-         
+        DESCONECTAR
       END;',
     start_date => SYSDATE+1,
     repeat_interval => 'FREQ=WEEKLY; BYDAY=MON',

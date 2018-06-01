@@ -40,13 +40,29 @@ BEGIN
         CONTADOR:=CONTADOR+1;
       END IF;
       IF CONTADOR=3 THEN
-        ADMINISTRADOR_U.GESTION_USUARIOS.BORRADO(VAR_CURSOR.ID_USUARIO);
+        GESTION_USUARIOS.BORRADO(VAR_CURSOR.ID_USUARIO);
       END IF;
     END LOOP;
   END;
   COMMIT;
 END;
-
+/
+/*
+/
+--en system dar privilegios:
+--grant create job to u_administrador;
+begin
+DBMS_SCHEDULER.CREATE_JOB (
+    job_name=> 'borrado_semanal',
+    job_type=> 'STORED_PROCEDURE',
+    job_action => 'P_INACTIVO',
+    start_date => sysdate,
+    repeat_interval => 'FREQ=WEEKLY;BYDAY=FRI'
+    );
+end;
+/
+exec dbms_scheduler.enable('borrado_semanal');
+*/
 BEGIN
     DBMS_SCHEDULER.CREATE_JOB (
             job_name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"',
@@ -72,5 +88,6 @@ BEGIN
     DBMS_SCHEDULER.enable(
              name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"');
 END;
+-->>>>>>> master
 
 exec dbms_scheduler.enable('BORRADO_SEMANAL');
