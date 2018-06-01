@@ -31,9 +31,9 @@ ALTER TABLE ajustes ADD CONSTRAINT ajustes_pk PRIMARY KEY ( id_ajustes );
 CREATE TABLE canal (
     id_canal        NUMBER NOT NULL,
     nombre          VARCHAR2(50) NOT NULL,
-    descripción     VARCHAR2(50),
+    descripcion     VARCHAR2(50),
     ambito          VARCHAR2(50) NOT NULL,
-    temática        VARCHAR2(50) NOT NULL,
+    tematica        VARCHAR2(50) NOT NULL,
     imagen          blob,
     id_trailer      NUMBER ,
     subscriptores   NUMBER NOT NULL
@@ -181,7 +181,7 @@ CREATE TABLE usuario (
     apellido2                VARCHAR2(50) NOT NULL,
     email                    VARCHAR2(50) NOT NULL,
     foto                     blob NOT NULL,
-    descripción              VARCHAR2(50),
+    descripcion              VARCHAR2(50),
     zona_horaria             VARCHAR2(50) NOT NULL,
     idioma                   VARCHAR2(50) NOT NULL,
     pais                     VARCHAR2(50) NOT NULL,
@@ -201,7 +201,7 @@ CREATE TABLE video (
     id_video             NUMBER NOT NULL,
     duracion             NUMBER NOT NULL,
     titulo               VARCHAR2(50) NOT NULL,
-    descripción          VARCHAR2(50),
+    descripcion          VARCHAR2(50),
     formato              VARCHAR2(50) NOT NULL,
     enlace               VARCHAR2(50) NOT NULL,
     n_visualizaciones   NUMBER NOT NULL,
@@ -218,9 +218,9 @@ ALTER TABLE video ADD CONSTRAINT video_pk PRIMARY KEY ( id_video );
 
 CREATE TABLE video_anuncio (
     id_video             NUMBER NOT NULL,
-    temática             VARCHAR2(50) NOT NULL,
+    tematica             VARCHAR2(50) NOT NULL,
     edad                 NUMBER,
-    género               VARCHAR2(50),
+    genero               VARCHAR2(50),
     idioma               VARCHAR2(50),
     pais                 VARCHAR2(50),
     empresa_id_usuario   NUMBER,
