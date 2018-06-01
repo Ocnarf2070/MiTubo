@@ -7,7 +7,7 @@ CREATE OR REPLACE PACKAGE GESTION_USUARIOS AS
     zona_horaria in VARCHAR2,
     idioma in VARCHAR2,
     pais in VARCHAR2,
-    contraseña VARCHAR2,
+    contrasenia VARCHAR2,
     alias in VARCHAR2,
     ambito in varchar2,
     tematica in VARCHAR2
@@ -51,7 +51,7 @@ email in VARCHAR2,
 zona_horaria in VARCHAR2,
 idioma in VARCHAR2,
 pais in VARCHAR2,
-contraseña VARCHAR2,
+contrasenia VARCHAR2,
 alias in VARCHAR2,
 ambito in varchar2,
 tematica in VARCHAR2
@@ -66,11 +66,11 @@ aleatorio:=0;
 else 
 aleatorio:=aleatorio+1;
 end if;
-sentencia1:= 'CREATE USER ' || nombre || ' IDENTIFIED BY ' || contraseña || ' PROFILE MITUBO_PERF DEFAULT TABLESPACE ESPACE_GENTE';
+sentencia1:= 'CREATE USER ' || nombre || ' IDENTIFIED BY ' || contrasenia || ' PROFILE MITUBO_PERF DEFAULT TABLESPACE MITUBO_ESPACE';
 execute immediate sentencia1;
 sentencia2:= 'grant R_USUARIO to' || nombre;
 execute immediate sentencia2;
-insert INTO canal (ID_CANAL,NOMBRE,AMBITO,TEMÁTICA,SUBSCRIPTORES) values (aleatorio,alias,ambito,tematica,0);
+insert INTO canal (ID_CANAL,NOMBRE,AMBITO,TEMATICA,SUBSCRIPTORES) values (aleatorio,alias,ambito,tematica,0);
 insert INTO usuario (ID_USUARIO,ALIAS,NOMBRE,APELLIDO1,APELLIDO2,EMAIL,ZONA_HORARIA,IDIOMA,PAIS,CANAL_ID_CANAL) values (aleatorio,alias,nombre,apellido1,apellido2,email,zona_horaria,
 idioma,pais,aleatorio);
 COMMIT;
@@ -97,7 +97,7 @@ END create_user;
     UPDATE USUARIO SET NOMBRE = NOMBRE_NUEVO,
     APELLIDO1=AP1,
     APELLIDO2=AP2,
-    DESCRIPCIÓN=DES,
+    DESCRIPCION=DES,
     EMAIL=CORREO 
     WHERE ALIAS=USER;
   END MODIFICA;
