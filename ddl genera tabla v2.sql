@@ -236,8 +236,6 @@ CREATE TABLE Video_anuncio
     ID_Canal           NUMBER NOT NULL
   ) ;
 ALTER TABLE Video_anuncio ADD CONSTRAINT Video_anuncio_PK PRIMARY KEY ( ID_Video ) ;
-ALTER TABLE Video_anuncio ADD CONSTRAINT Video_anuncio_PKv1 UNIQUE ( ID_Video ) ;
-
 
 ALTER TABLE Comentario ADD CONSTRAINT Comentario_Comentario_FK FOREIGN KEY ( Comentario_id_comentario ) REFERENCES Comentario ( id_comentario ) ;
 
