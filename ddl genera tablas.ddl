@@ -69,9 +69,9 @@ CREATE TABLE Historial
   (
     Usuario_ID_Usuario NUMBER NOT NULL ,
     Video_ID_Video     NUMBER NOT NULL ,
-    Porcentaje_visto   NUMBER ,
-    empezo             NUMBER ,
-    termino            NUMBER ,
+    Visto   NUMBER ,
+    empezo             DATE ,
+    termino            DATE ,
     Cadena_busqueda    VARCHAR2 (100)
   ) ;
 ALTER TABLE Historial ADD CONSTRAINT Historialv1_PK PRIMARY KEY ( Usuario_ID_Usuario, Video_ID_Video ) ;
