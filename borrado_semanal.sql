@@ -23,7 +23,7 @@ BEGIN
   LOCK TABLE COMENTARIO IN SHARE MODE;
   LOCK TABLE VIDEO IN SHARE MODE;
   LOCK TABLE HISTORIALV1 IN SHARE MODE;
-  DECLARE CURSOR U_ALIAS IS SELECT ALIAS FROM USUARIO;
+  DECLARE CURSOR U_ALIAS IS SELECT ID_USUARIO, ALIAS FROM USUARIO;
   BEGIN
     FOR VAR_CURSOR IN U_ALIAS LOOP
       CONTADOR:=0;
@@ -40,22 +40,54 @@ BEGIN
         CONTADOR:=CONTADOR+1;
       END IF;
       IF CONTADOR=3 THEN
-        SENTENCIA:='DROP USER '|| VAR_CURSOR.ALIAS ;
-        execute immediate SENTENCIA;
+        GESTION_USUARIOS.BORRADO(VAR_CURSOR.ID_USUARIO);
       END IF;
     END LOOP;
   END;
   COMMIT;
 END;
-
+/
+/*
+/
+--en system dar privilegios:
+--grant create job to u_administrador;
 begin
 DBMS_SCHEDULER.CREATE_JOB (
     job_name=> 'borrado_semanal',
     job_type=> 'STORED_PROCEDURE',
     job_action => 'P_INACTIVO',
     start_date => sysdate,
-    repeat_interval => 'FREQ=SECONDLY;INTERVAL=60'
+    repeat_interval => 'FREQ=WEEKLY;BYDAY=FRI'
     );
 end;
+/
+exec dbms_scheduler.enable('borrado_semanal');
+*/
+BEGIN
+    DBMS_SCHEDULER.CREATE_JOB (
+            job_name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"',
+            job_type => 'STORED_PROCEDURE',
+            job_action => 'ADMINISTRADOR_U.P_INACTIVO',
+            number_of_arguments => 0,
+            start_date => SYSDATE,
+            repeat_interval =>'FREQ=WEEKLY;BYDAY=FRI',
+            end_date => NULL,
+            enabled => FALSE,
+            auto_drop => FALSE,
+            comments => '');
 
+         
+     
+ 
+    DBMS_SCHEDULER.SET_ATTRIBUTE( 
+             name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"', 
+             attribute => 'logging_level', value => DBMS_SCHEDULER.LOGGING_OFF);
+      
+  
+    
+    DBMS_SCHEDULER.enable(
+             name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"');
+END;
+-->>>>>>> master
 
+exec dbms_scheduler.enable('BORRADO_SEMANAL');
