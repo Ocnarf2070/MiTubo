@@ -3,9 +3,9 @@ CREATE TABLE Ajustes
   (
     ID_Ajustes    NUMBER NOT NULL ,
     nombre        VARCHAR2 (100) NOT NULL ,
-    descripcion   VARCHAR2 (100) NOT NULL ,
-    valor_defecto NUMBER NOT NULL ,
-    tipo_dato     VARCHAR2 (100) NOT NULL ,
+    descripcion   VARCHAR2 (100)  ,
+    valor_defecto NUMBER ,
+    tipo_dato     VARCHAR2 (100) ,
     modo_pago     VARCHAR2 (100)
   ) ;
 ALTER TABLE Ajustes ADD CHECK ( tipo_dato IN ('boolean')) ;
@@ -20,7 +20,7 @@ CREATE TABLE Canal
     ambito      VARCHAR2 (100) NOT NULL ,
     tematica    VARCHAR2 (100) NOT NULL ,
     imagen BLOB ,
-    id_trailer    NUMBER NOT NULL ,
+    id_trailer    NUMBER,
     subscriptores NUMBER NOT NULL
   ) ;
 ALTER TABLE Canal ADD CONSTRAINT Canal_PK PRIMARY KEY ( ID_Canal ) ;
@@ -69,9 +69,9 @@ CREATE TABLE Historial
   (
     Usuario_ID_Usuario NUMBER NOT NULL ,
     Video_ID_Video     NUMBER NOT NULL ,
-    Porcentaje_visto   NUMBER ,
-    empezo             NUMBER ,
-    termino            NUMBER ,
+    Visto   NUMBER ,
+    empezo             DATE ,
+    termino            DATE ,
     Cadena_busqueda    VARCHAR2 (100)
   ) ;
 ALTER TABLE Historial ADD CONSTRAINT Historialv1_PK PRIMARY KEY ( Usuario_ID_Usuario, Video_ID_Video ) ;
@@ -157,15 +157,15 @@ CREATE TABLE Usuario
     ALIAS      VARCHAR2 (100) NOT NULL ,
     nombre     VARCHAR2 (100) NOT NULL ,
     Apellido1  VARCHAR2 (100) NOT NULL ,
-    Apellido2  VARCHAR2 (100) NOT NULL ,
+    Apellido2  VARCHAR2 (100) ,
     email      VARCHAR2 (100) NOT NULL ,
-    foto BLOB NOT NULL ,
+    foto BLOB ,
     descripcion            VARCHAR2 (100) ,
-    zona_horaria           VARCHAR2 (100) NOT NULL ,
+    zona_horaria           VARCHAR2 (100) ,
     idioma                 VARCHAR2 (100) NOT NULL ,
     pais                   VARCHAR2 (100) NOT NULL ,
     Canal_ID_Canal         NUMBER NOT NULL ,
-    Historial_Historial_ID NUMBER NOT NULL
+    Historial_Historial_ID NUMBER
   ) ;
 CREATE UNIQUE INDEX Usuario__IDX ON Usuario
   (
@@ -186,14 +186,14 @@ CREATE TABLE Video
     Duracion          NUMBER NOT NULL ,
     Titulo            VARCHAR2 (100) NOT NULL ,
     Descripcion       VARCHAR2 (100) ,
-    Formato           VARCHAR2 (100) NOT NULL ,
+    Formato           VARCHAR2 (100) ,
     Enlace            VARCHAR2 (100) NOT NULL ,
     n_visualizaciones NUMBER NOT NULL ,
     n_comentarios     NUMBER NOT NULL ,
-    no_megusta        NUMBER NOT NULL ,
+    n_megusta        NUMBER NOT NULL ,
     n_nomegusta       NUMBER ,
     fecha_creacion    DATE NOT NULL ,
-    imagen BLOB NOT NULL ,
+    imagen BLOB ,
     Video_Pago     CHAR (1) ,
     Canal_ID_Canal NUMBER
   ) ;

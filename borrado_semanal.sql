@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW V_ULTIMABUSQUEDA ("ALIAS","ULTIMABUSQUEDA")AS (SELECT U.ALIAS, MAX(H.TERMINO) FROM USUARIO U, HISTORIALV1 H
+CREATE OR REPLACE VIEW V_ULTIMABUSQUEDA ("ALIAS","ULTIMABUSQUEDA")AS (SELECT U.ALIAS, MAX(H.TERMINO) FROM USUARIO U, HISTORIAL H
 WHERE U.ID_USUARIO=H.USUARIO_ID_USUARIO
 GROUP BY U.ALIAS);
 
@@ -22,7 +22,7 @@ BEGIN
   LOCK TABLE USUARIO IN SHARE MODE;
   LOCK TABLE COMENTARIO IN SHARE MODE;
   LOCK TABLE VIDEO IN SHARE MODE;
-  LOCK TABLE HISTORIALV1 IN SHARE MODE;
+  LOCK TABLE HISTORIAL IN SHARE MODE;
   DECLARE CURSOR U_ALIAS IS SELECT ID_USUARIO, ALIAS FROM USUARIO;
   BEGIN
     FOR VAR_CURSOR IN U_ALIAS LOOP
@@ -65,9 +65,9 @@ exec dbms_scheduler.enable('borrado_semanal');
 */
 BEGIN
     DBMS_SCHEDULER.CREATE_JOB (
-            job_name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"',
+            job_name => '"PLANIFICADOR"."BORRADO_SEMANAL"',
             job_type => 'STORED_PROCEDURE',
-            job_action => 'ADMINISTRADOR_U.P_INACTIVO',
+            job_action => 'U_ADMINISTRADOR.P_INACTIVO',
             number_of_arguments => 0,
             start_date => SYSDATE,
             repeat_interval =>'FREQ=WEEKLY;BYDAY=FRI',
@@ -76,18 +76,12 @@ BEGIN
             auto_drop => FALSE,
             comments => '');
 
-         
-     
- 
     DBMS_SCHEDULER.SET_ATTRIBUTE( 
-             name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"', 
+             name => '"U_ADMINISTRADOR"."BORRADO_SEMANAL"', 
              attribute => 'logging_level', value => DBMS_SCHEDULER.LOGGING_OFF);
-      
-  
     
     DBMS_SCHEDULER.enable(
-             name => '"ADMINISTRADOR_U"."BORRADO_SEMANAL"');
+             name => '"PLANIFICADOR"."BORRADO_SEMANAL"');
 END;
--->>>>>>> master
 
 exec dbms_scheduler.enable('BORRADO_SEMANAL');

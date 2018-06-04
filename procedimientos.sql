@@ -1,4 +1,10 @@
 -------------------1º-----------------------
+CREATE SEQUENCE ID_USER_CANAL
+INCREMENT BY 1
+START WITH 1
+NOMAXVALUE
+NOMINVALUE;
+
 create or replace procedure create_user
 (
 nombre in VARCHAR2,
@@ -17,22 +23,16 @@ sentencia1 VARCHAR2(500);
 sentencia2 varchar2(500);
 aleatorio number;
 BEGIN
-select MAX(ID_USUARIO) into aleatorio from USUARIO;
-if aleatorio IS NULL then
-aleatorio:=0;
-else 
-aleatorio:=aleatorio+1;
-end if;
-sentencia1:= 'CREATE USER ' || nombre || ' IDENTIFIED BY ' || contraseña || ' PROFILE MITUBO_PERF DEFAULT TABLESPACE ESPACE_GENTE';
+aleatorio:=ID_USER_CANAL.NEXTVAL;
+sentencia1:= 'CREATE USER ' || nombre || ' IDENTIFIED BY ' || contraseña || ' PROFILE MITUBO_PERF';
 execute immediate sentencia1;
-sentencia2:= 'grant R_USUARIO to' || nombre;
+sentencia2:= 'grant R_USUARIO to ' || nombre;
 execute immediate sentencia2;
-insert INTO canal (ID_CANAL,NOMBRE,AMBITO,TEMÁTICA,SUBSCRIPTORES) values (aleatorio,alias,ambito,tematica,0);
+insert INTO canal (ID_CANAL,NOMBRE,AMBITO,TEMATICA,SUBSCRIPTORES) values (aleatorio,alias,ambito,tematica,0);
 insert INTO usuario (ID_USUARIO,ALIAS,NOMBRE,APELLIDO1,APELLIDO2,EMAIL,ZONA_HORARIA,IDIOMA,PAIS,CANAL_ID_CANAL) values (aleatorio,alias,nombre,apellido1,apellido2,email,zona_horaria,
 idioma,pais,aleatorio);
 COMMIT;
 END create_user;
-
 --3.1
 /
 CREATE SEQUENCE SEQ_VIDEO
@@ -47,7 +47,7 @@ START WITH 1
 NOMAXVALUE
 NOMINVALUE;
 /
-CREATE OR REPLACE PROCEDURE ALTA_VIDEO 
+create or replace PROCEDURE ALTA_VIDEO 
 (
 DUR IN NUMBER,
 TIT IN VARCHAR2,
@@ -61,9 +61,11 @@ IDC NUMBER;
 IDU NUMBER;
 IDV NUMBER;
 IDN NUMBER;
+ID_USER NUMBER;
 BEGIN
-  SELECT ID_USUARIO INTO IDU FROM USUARIO WHERE ALIAS = USER;
-  SELECT CANAL_ID_CANAL INTO IDC FROM USUARIO WHERE ALIAS = USER;
+  SELECT ID_USUARIO INTO IDU FROM USUARIO WHERE UPPER(ALIAS) = UPPER(USER);
+  SELECT CANAL_ID_CANAL INTO IDC FROM USUARIO WHERE UPPER(ALIAS) = UPPER(USER);
+  SELECT ID_USUARIO INTO ID_USER FROM USUARIO WHERE UPPER(ALIAS)=UPPER(USER);
   IDV := SEQ_VIDEO.NEXTVAL;
   /*SELECT MAX(ID_VIDEO) INTO IDV FROM VIDEO;
   
@@ -83,7 +85,7 @@ BEGIN
     N_VISUALIZACIONES, N_COMENTARIOS, N_MEGUSTA, N_NOMEGUSTA, FECHA_CREACION,
     IMAGEN, VIDEO_PAGO, CANAL_ID_CANAL)
     VALUES(IDV, DUR, TIT, DES, FRM, ENL, 0, 0, 0, 0, SYSDATE, IMG, '1', IDC);
-    INSERT INTO VIDEO_PAGO (ID_VIDEO, COSTE) VALUES(IDV, COSTE);
+    INSERT INTO PAGO (VIDEO_ID_VIDEO, PAGO,USUARIO_ID_USUARIO) VALUES(IDV, COSTE,ID_USER);
   END IF;
   
   /*SELECT MAX(ID_NOTIFICACION) INTO IDN FROM NOTIFICACION;
@@ -121,7 +123,7 @@ es_de char(1);
 EX_VISIONADO_NO_AUTORIZADO EXCEPTION;
 BEGIN
 --Saco el id del usuario que esta en este momento
-SELECT ID_USUARIO into nombre FROM USUARIO where user=ALIAS;
+SELECT ID_USUARIO into nombre FROM USUARIO where UPPER(user)=UPPER(ALIAS);
 --Saco la duracion de el video
 SELECT DURACION into porcentaje FROM VIDEO where ID_VIDEO=video_id;
 --Miro si el video es de pago
@@ -136,13 +138,13 @@ end if;
 end if;
 --Si has visto el video solo hay q actualizar
 --Si no lo has visto saltara la excepcion de no datos q es xq no encuentra nada
-SELECT PORCENTAJE_VISTO into visto from HISTORIALV1 where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
+SELECT VISTO into visto from HISTORIAL where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
 --Si lo q habias visto mas lo q has visto ahora suma la duracion del video pues lo has terminado de ver
  if duracion_v+visto=porcentaje then
  --Actualizo termino a la fecha actual y el porcentaje al total del video
-  UPDATE historialv1 set termino = sysdate, porcentaje_visto=porcentaje where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
+  UPDATE historial set termino = sysdate, visto=porcentaje where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
   else 
-  UPDATE historialv1 set  porcentaje_visto=PORCENTAJE_VISTO+duracion_v where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
+  UPDATE historial set  visto=VISTO+duracion_v where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
   end if;
 EXCEPTION
 --Si llego aqui es q es la 1º vez que veo el video
@@ -150,16 +152,17 @@ WHEN no_data_found THEN
 --Actualizo el nº de visializaciones del video
  UPDATE video set N_VISUALIZACIONES = N_VISUALIZACIONES+1 where video_id=ID_VIDEO;
  --Inserto en historial q he visto o empezado el video
- INSERT INTO historialv1 (usuario_id_usuario,video_id_video,PORCENTAJE_VISTO,EMPEZO) values (nombre,video_id,duracion_v,SYSDATE);
+ INSERT INTO historial (usuario_id_usuario,video_id_video,VISTO,EMPEZO) values (nombre,video_id,duracion_v,SYSDATE);
 --Si he visto el video entero lo actualizo
  if duracion_v=porcentaje then
  --Actualizo termino al dia de finalizacion y porcentaje a la duracion total del video
-  UPDATE historialv1 set termino = sysdate, porcentaje_visto=porcentaje where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
+  UPDATE historial set termino = sysdate, visto=porcentaje where video_id=VIDEO_ID_VIDEO and USUARIO_ID_USUARIO=nombre;
   end if;
   --Borro la notificacion del video porque ya lo empeze a ver
   delete from NOTIFICACION where video_id=VIDEO_ID_VIDEO and nombre=USUARIO_ID_USUARIO;
  COMMIT;
 when EX_VISIONADO_NO_AUTORIZADO then
 --Si llego aqui es q no lo he pagado
-dbms_output.put_line('El video es de pago y no has pagado');
+--dbms_output.put_line('El video es de pago y no has pagado');
+raise EX_VISIONADO_NO_AUTORIZADO;
 END SIMULAR_VIDEO;
