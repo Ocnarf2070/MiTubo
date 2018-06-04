@@ -190,7 +190,7 @@ CREATE TABLE Video
     Enlace            VARCHAR2 (100) NOT NULL ,
     n_visualizaciones NUMBER NOT NULL ,
     n_comentarios     NUMBER NOT NULL ,
-    no_megusta        NUMBER NOT NULL ,
+    n_megusta        NUMBER NOT NULL ,
     n_nomegusta       NUMBER ,
     fecha_creacion    DATE NOT NULL ,
     imagen BLOB NOT NULL ,
