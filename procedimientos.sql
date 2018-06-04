@@ -1,4 +1,10 @@
 -------------------1º-----------------------
+CREATE SEQUENCE ID_USER_CANAL
+INCREMENT BY 1
+START WITH 1
+NOMAXVALUE
+NOMINVALUE;
+
 create or replace procedure create_user
 (
 nombre in VARCHAR2,
@@ -17,22 +23,16 @@ sentencia1 VARCHAR2(500);
 sentencia2 varchar2(500);
 aleatorio number;
 BEGIN
-select MAX(ID_USUARIO) into aleatorio from USUARIO;
-if aleatorio IS NULL then
-aleatorio:=0;
-else 
-aleatorio:=aleatorio+1;
-end if;
-sentencia1:= 'CREATE USER ' || nombre || ' IDENTIFIED BY ' || contraseña || ' PROFILE MITUBO_PERF DEFAULT TABLESPACE ESPACE_GENTE';
+aleatorio:=ID_USER_CANAL.NEXTVAL;
+sentencia1:= 'CREATE USER ' || nombre || ' IDENTIFIED BY ' || contraseña || ' PROFILE MITUBO_PERF';
 execute immediate sentencia1;
-sentencia2:= 'grant R_USUARIO to' || nombre;
+sentencia2:= 'grant R_USUARIO to ' || nombre;
 execute immediate sentencia2;
-insert INTO canal (ID_CANAL,NOMBRE,AMBITO,TEMÁTICA,SUBSCRIPTORES) values (aleatorio,alias,ambito,tematica,0);
+insert INTO canal (ID_CANAL,NOMBRE,AMBITO,TEMATICA,SUBSCRIPTORES) values (aleatorio,alias,ambito,tematica,0);
 insert INTO usuario (ID_USUARIO,ALIAS,NOMBRE,APELLIDO1,APELLIDO2,EMAIL,ZONA_HORARIA,IDIOMA,PAIS,CANAL_ID_CANAL) values (aleatorio,alias,nombre,apellido1,apellido2,email,zona_horaria,
 idioma,pais,aleatorio);
 COMMIT;
 END create_user;
-
 --3.1
 /
 CREATE SEQUENCE SEQ_VIDEO
