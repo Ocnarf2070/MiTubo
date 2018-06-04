@@ -83,5 +83,5 @@ BEGIN
     DBMS_SCHEDULER.enable(
              name => '"PLANIFICADOR"."BORRADO_SEMANAL"');
 END;
-
+/
 exec dbms_scheduler.enable('BORRADO_SEMANAL');
